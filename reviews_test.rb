@@ -167,16 +167,41 @@ class ReviewsTest < Minitest::Test
     assert_equal employee2, kindergarten.least_paid
   end
 
+  #Return all employees in a department, ordered alphabetically by name.
+  def test_alphabetical_employees
+    employee = Employee.create(name: "Sammy", email: "me@example.com", phone: "555-555-5555", salary: 16)
+    employee2 = Employee.create(name: "Jola", email: "you@example.com", phone: "777-777-7777", salary: 9)
+    employee3 = Employee.create(name: "Mikey", email: "you@example.com", phone: "777-777-7777", salary: 20)
+
+    technology = Department.create(name: "Technology")
+    technology.add_employee(employee)
+    technology.add_employee(employee2)
+    technology.add_employee(employee3)
+
+    assert_equal [employee2, employee3, employee], technology.alphabetize_names
+  end
+
   #Return all employees who are getting paid more than the average salary.
   def test_employees_more_than_average_salary
     employee = Employee.create(name: "Sammy", email: "me@example.com", phone: "555-555-5555", salary: 16)
     employee2 = Employee.create(name: "Jola", email: "you@example.com", phone: "777-777-7777", salary: 9)
     employee3 = Employee.create(name: "Mikey", email: "you@example.com", phone: "777-777-7777", salary: 20)
+
     technology = Department.create(name: "Technology")
     technology.add_employee(employee)
     technology.add_employee(employee2)
     technology.add_employee(employee3)
-    assert_equal [employee, employee3], technology.salary_above_average
+
+    assert_equal [employee2, employee3, employee], technology.alphabetize_names
+  end
+
+  #Return all employees with names which are palindromes.
+  def test_palindrome_names
+    employee = Employee.create(name: "Hallah", email: "me@example.com", phone: "555-555-5555", salary: 16)
+    employee2 = Employee.create(name: "Notme", email: "you@example.com", phone: "777-777-7777", salary: 9)
+    employee3 = Employee.create(name: "Anderredna", email: "you@example.com", phone: "777-777-7777", salary: 20)
+
+    assert_equal [employee, employee3], employees.palindrome
   end
 
 end

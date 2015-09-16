@@ -45,4 +45,8 @@ class Employee < ActiveRecord::Base
     self.satisfactory = (count_good - count_bad > 0)
   end
 
+  def palindrome
+
+  end
+
 end

@@ -29,6 +29,10 @@ class Department < ActiveRecord::Base
     employees.order("salary").limit(1)
   end
 
+  def alphabetize_names
+    employees.order("name").to_a
+  end
+
   def salary_above_average
     employees.where("salary > sum(salary)/employees.count")
   end
