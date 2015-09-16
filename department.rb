@@ -28,4 +28,8 @@ class Department < ActiveRecord::Base
   def least_paid
     employees.order("salary").limit(1)
   end
+
+  def salary_above_average
+    employees.where("salary > sum(salary)/employees.count")
+  end
 end
