@@ -1,15 +1,13 @@
-class Employee
+require 'active_record'
 
-  attr_reader :name, :salary
+ActiveRecord::Base.establish_connection(
+  adapter: 'sqlite3',
+  database: 'employee_dev.sqlite3'
+)
 
-  def initialize(name:, salary:, email: nil, phone: nil)
-    @name = name
-    @salary = salary
-    @email = email
-    @phone = phone
-    @reviews = []
-    @satisfactory = true
-  end
+class Employee < ActiveRecord::Base
+  belongs_to :department
+  has_many :reviews
 
   def recent_review
     @reviews.last
