@@ -17,6 +17,10 @@ EmployeeMigration.migrate(:up)
 
 class ReviewsTest < Minitest::Test
 
+  def self.test_order
+  :alpha
+  end
+
   def test_create_new_department
     assert Department.create(name: "Development")
     # assert_raises(ArgumentError) do
