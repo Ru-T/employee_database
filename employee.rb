@@ -9,12 +9,12 @@ class Employee < ActiveRecord::Base
   belongs_to :department
   has_many :reviews
 
-  def recent_review
-    reviews.last
-  end
-
   def satisfactory?
-    satisfactory
+    if self.satisfactory == nil
+      self.satisfactory = true
+    else
+      self.satisfactory
+    end
   end
 
   def give_raise(amount)
@@ -23,8 +23,12 @@ class Employee < ActiveRecord::Base
 
   def give_review(review)
     Review.create(review: review, employee_id: self.id)
-    # assess_performance
-    # true
+    assess_performance
+    true
+  end
+
+  def recent_review
+    reviews.last
   end
 
   def assess_performance
@@ -33,10 +37,20 @@ class Employee < ActiveRecord::Base
     good_terms = Regexp.union(good_terms)
     bad_terms = Regexp.union(bad_terms)
 
-    count_good = reviews.last.scan(good_terms).length
-    count_bad = reviews.last.scan(bad_terms).length
+    #Find the latest review of the employee being reviewed.
+    # review = Review.select(:review).where(employee_id: self.id)
+    # review2 = Review.find(employee_id: self.id) #.last
+    # review3 = Review.select("review").where("employee_id: self.id").last
+    # SELECT review.last
+    # FROM reviews
+    # WHERE employee_id = 10;
 
-    satisfactory = (count_good - count_bad > 0)
+    review = self.reviews.last.review
+
+    count_good = review.scan(good_terms).length
+    count_bad = review.scan(bad_terms).length
+
+    self.satisfactory = (count_good - count_bad > 0)
   end
 
 end

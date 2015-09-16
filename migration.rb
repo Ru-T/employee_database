@@ -18,7 +18,7 @@ class EmployeeMigration < ActiveRecord::Migration
       t.integer :salary
       t.string :email
       t.string :phone
-      t.boolean :satisfactory
+      t.boolean :satisfactory 
       t.timestamps null: false
     end
 

@@ -8,9 +8,4 @@ ActiveRecord::Base.establish_connection(
 class Review < ActiveRecord::Base
   belongs_to :employee
 
-  def recent_review
-    reviews.last
-  end
-
-
 end
