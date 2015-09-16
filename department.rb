@@ -22,6 +22,10 @@ class Department < ActiveRecord::Base
   end
 
   def total_employees
-    employees.count #  employees.reduce(0){|sum, employee| sum + employee.salary}
+    employees.count
+  end
+
+  def least_paid
+    employees.order("salary").limit(1)
   end
 end

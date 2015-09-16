@@ -156,4 +156,15 @@ class ReviewsTest < Minitest::Test
     kindergarten.add_employee(employee2)
     assert_equal 2, kindergarten.total_employees
   end
+
+  #Return the employee who is being paid the least in a department.
+  def test_least_paid_employee
+    employee = Employee.create(name: "Naomi", email: "me@example.com", phone: "555-555-5555", salary: 10)
+    employee2 = Employee.create(name: "Aaron", email: "you@example.com", phone: "777-777-7777", salary: 5)
+    kindergarten = Department.create(name: "Kindergarten")
+    kindergarten.add_employee(employee)
+    kindergarten.add_employee(employee2)
+    assert_equal employee2, kindergarten.least_paid
+  end
+
 end
