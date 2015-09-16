@@ -30,4 +30,4 @@ class EmployeeMigration < ActiveRecord::Migration
   end
 end
 
-EmployeeMigration.migrate(:up) #do the change or (:down) to undo the change
+#EmployeeMigration.migrate(:up) #do the change or (:down) to undo the change

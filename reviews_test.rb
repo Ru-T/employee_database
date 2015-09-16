@@ -12,52 +12,52 @@ ActiveRecord::Base.establish_connection(
   database: 'employee_test.sqlite3'
 )
 
-class ReviewsTest < Minitest::Test
-
-EmployeeMigration.migrate(:down)
+EmployeeMigration.migrate(:down) rescue false
 EmployeeMigration.migrate(:up)
 
+class ReviewsTest < Minitest::Test
+
   def test_create_new_department
-    assert Department.create("Development")
-    assert_raises(ArgumentError) do
-      Department.create()
-    end
+    assert Department.create(name: "Development")
+    # assert_raises(ArgumentError) do
+    #   Department.create()
+    # end
     assert_raises(ArgumentError) do
       Department.create(1,2)
     end
   end
 
   def test_create_new_employee
-    assert Employee.create( name: "Joanna", email: "jdark@example.com", phone: "515-888-4821", salary: 85000)
+    assert Employee.create(name: "Joanna", email: "jdark@example.com", phone: "515-888-4821", salary: 85000)
     assert_raises(ArgumentError) do
       Employee.create(1,2,3,4,5)
     end
-    assert_raises(ArgumentError) do
-      Employee.create(1,2,3)
-    end
+    # assert_raises(ArgumentError) do
+    #   Employee.create(1,2,3)
+    # end
   end
 
   def test_add_employee_to_department
     e = Employee.create(name: "Joanna", email: "jdark@example.com", phone: "515-888-4821", salary: 85000)
-    d = Department.create("Development")
+    d = Department.create(name: "Development")
     d.add_employee(e)
-    assert_equal [e], d.employees
+    assert_equal e.department_id, d.id
   end
 
   def test_get_employee_name
-    employee = Employee.create( name: "Joanna", email: "jdark@example.com", phone: "515-888-4821", salary: 85000)
+    employee = Employee.create(name: "Joanna", email: "jdark@example.com", phone: "515-888-4821", salary: 85000)
     assert_equal "Joanna", employee.name
   end
 
   def test_get_employee_salary
-    employee = Employee.create( name: "Joanna", email: "jdark@example.com", phone: "515-888-4821", salary: 85000)
+    employee = Employee.create(name: "Joanna", email: "jdark@example.com", phone: "515-888-4821", salary: 85000)
     assert_equal 85000, employee.salary
   end
 
   def test_get_department_salary
     employee = Employee.create(name: "Joanna", email: "jdark@example.com", phone: "515-888-4821", salary: 80000)
     employee2 = Employee.create(name: "Lunk", email: "lunk@example.com", phone: "882-329-3843", salary: 150000)
-    development = Department.create("Development")
+    development = Department.create(name: "Development")
     development.add_employee(employee)
     development.add_employee(employee2)
     assert_equal 230000, development.total_salary
@@ -74,16 +74,16 @@ EmployeeMigration.migrate(:up)
   end
 
   def test_employees_can_get_raises
-    employee = Employee.create( name: "Joanna", email: "jdark@example.com", phone: "515-888-4821", salary: 80000)
+    employee = Employee.create(name: "Joanna", email: "jdark@example.com", phone: "515-888-4821", salary: 80000)
     employee.give_raise(5000)
     assert_equal 85000, employee.salary
   end
 
   def test_whole_departments_can_get_raises
-    employee = Employee.create( name: "Joanna", email: "jdark@example.com", phone: "515-888-4821", salary: 80000)
-    employee2 = Employee.create( name: "Lunk", email: "lunk@example.com", phone: "882-329-3843", salary: 150000)
-    employee3 = Employee.create( name: "Sanic", email: "sanic@example.com", phone: "333-444-5555", salary: 20000)
-    development = Department.create("Development")
+    employee = Employee.create(name: "Joanna", email: "jdark@example.com", phone: "515-888-4821", salary: 80000)
+    employee2 = Employee.create(name: "Lunk", email: "lunk@example.com", phone: "882-329-3843", salary: 150000)
+    employee3 = Employee.create(name: "Sanic", email: "sanic@example.com", phone: "333-444-5555", salary: 20000)
+    development = Department.create(name: "Development")
     development.add_employee(employee)
     development.add_employee(employee2)
     development.give_raise(30000)
@@ -97,7 +97,7 @@ EmployeeMigration.migrate(:up)
     employee2 = Employee.create( name: "Lunk", email: "lunk@example.com", phone: "882-329-3843", salary: 150000)
     employee2.give_review("bad negative less")
 
-    development = Department.create("Development")
+    development = Department.create(name: "Development")
     development.add_employee(employee)
     development.add_employee(employee2)
 
@@ -111,7 +111,7 @@ EmployeeMigration.migrate(:up)
     employee.give_review("bad negative less")
     employee2 = Employee.create( name: "Lunk", email: "lunk@example.com", phone: "882-329-3843", salary: 150000)
     employee2.give_review("bad negative less")
-    development = Department.create("Development")
+    development = Department.create(name: "Development")
     development.add_employee(employee)
     development.add_employee(employee2)
     development.give_raise(20000)
