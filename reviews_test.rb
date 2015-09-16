@@ -17,10 +17,6 @@ EmployeeMigration.migrate(:up)
 
 class ReviewsTest < Minitest::Test
 
-  def self.test_order
-  :alpha
-  end
-
   def test_create_new_department
     assert Department.create(name: "Development")
     # assert_raises(ArgumentError) do
@@ -91,9 +87,9 @@ class ReviewsTest < Minitest::Test
     development.add_employee(employee)
     development.add_employee(employee2)
     development.give_raise(30000)
-    assert_equal 95000, employee.salary
-    assert_equal 165000, employee2.salary
-    assert_equal 20000, employee3.salary
+    assert_equal 95000, employee.salary # employee.reload.salary
+    assert_equal 165000, employee2.salary # employee2.reload.salary
+    assert_equal 20000, employee3.salary # employee3.reload.salary
   end
 
   def test_only_satisfactory_employees_get_raises
@@ -147,7 +143,8 @@ class ReviewsTest < Minitest::Test
     assert employee4.satisfactory?
   end
 
-  #Return the total number of employees in a department.
+#_____________________ NEW TESTS _____________________________
+
   def test_total_employees_in_department
     employee = Employee.create(name: "Naomi", email: "me@example.com", phone: "555-555-5555", salary: 180000)
     employee2 = Employee.create(name: "Aaron", email: "you@example.com", phone: "777-777-7777", salary: 250000)
@@ -157,7 +154,6 @@ class ReviewsTest < Minitest::Test
     assert_equal 2, kindergarten.total_employees
   end
 
-  #Return the employee who is being paid the least in a department.
   def test_least_paid_employee
     employee = Employee.create(name: "Naomi", email: "me@example.com", phone: "555-555-5555", salary: 10)
     employee2 = Employee.create(name: "Aaron", email: "you@example.com", phone: "777-777-7777", salary: 5)
@@ -167,7 +163,6 @@ class ReviewsTest < Minitest::Test
     assert_equal employee2, kindergarten.least_paid
   end
 
-  #Return all employees in a department, ordered alphabetically by name.
   def test_alphabetical_employees
     employee = Employee.create(name: "Sammy", email: "me@example.com", phone: "555-555-5555", salary: 16)
     employee2 = Employee.create(name: "Jola", email: "you@example.com", phone: "777-777-7777", salary: 9)
@@ -181,7 +176,6 @@ class ReviewsTest < Minitest::Test
     assert_equal [employee2, employee3, employee], technology.alphabetize_names
   end
 
-  #Return all employees who are getting paid more than the average salary.
   def test_employees_more_than_average_salary
     employee = Employee.create(name: "Sammy", email: "me@example.com", phone: "555-555-5555", salary: 16)
     employee2 = Employee.create(name: "Jola", email: "you@example.com", phone: "777-777-7777", salary: 9)
@@ -192,16 +186,61 @@ class ReviewsTest < Minitest::Test
     technology.add_employee(employee2)
     technology.add_employee(employee3)
 
-    assert_equal [employee2, employee3, employee], technology.alphabetize_names
+    assert_equal [employee, employee3], technology.salary_above_average
   end
 
-  #Return all employees with names which are palindromes.
   def test_palindrome_names
     employee = Employee.create(name: "Hallah", email: "me@example.com", phone: "555-555-5555", salary: 16)
     employee2 = Employee.create(name: "Notme", email: "you@example.com", phone: "777-777-7777", salary: 9)
     employee3 = Employee.create(name: "Anderredna", email: "you@example.com", phone: "777-777-7777", salary: 20)
 
-    assert_equal [employee, employee3], employees.palindrome
+    technology = Department.create(name: "Technology")
+    technology.add_employee(employee)
+    technology.add_employee(employee2)
+    technology.add_employee(employee3)
+
+    assert_equal [employee, employee3], technology.palindrome
   end
+
+  #Return the department with the most employees.
+  # def test_department_with_most_employees
+  #   employee = Employee.create(name: "Sammy", email: "me@example.com", phone: "555-555-5555", salary: 16)
+  #   employee2 = Employee.create(name: "Jola", email: "you@example.com", phone: "777-777-7777", salary: 9)
+  #   employee3 = Employee.create(name: "Mikey", email: "you@example.com", phone: "777-777-7777", salary: 20)
+  #
+  #   technology = Department.create(name: "Technology")
+  #   technology.add_employee(employee)
+  #   technology.add_employee(employee2)
+  #   technology.add_employee(employee3)
+  #
+  #   employee4 = Employee.create(name: "Naomi", email: "you@example.com", phone: "777-777-7777", salary: 20)
+  #   employee5 = Employee.create(name: "Aaron", email: "you@example.com", phone: "777-777-7777", salary: 20)
+  #
+  #   insurance = Department.create(name: "Insurance")
+  #   insurance.add_employee(employee4)
+  #   insurance.add_employee(employee5)
+  #
+  #   assert_equal technology, Department.most_employees
+  # end
+
+#   def test_moving_employees_from_one_department_to_another
+#       employee = Employee.create(name: "Sammy", email: "me@example.com", phone: "555-555-5555", salary: 16)
+#       employee2 = Employee.create(name: "Jola", email: "you@example.com", phone: "777-777-7777", salary: 9)
+#       employee3 = Employee.create(name: "Mikey", email: "you@example.com", phone: "777-777-7777", salary: 20)
+#
+#       technology = Department.create(name: "Technology")
+#       technology.add_employee(employee)
+#       technology.add_employee(employee2)
+#       technology.add_employee(employee3)
+#
+#       employee4 = Employee.create(name: "Naomi", email: "you@example.com", phone: "777-777-7777", salary: 20)
+#       employee5 = Employee.create(name: "Aaron", email: "you@example.com", phone: "777-777-7777", salary: 20)
+#
+#       insurance = Department.create(name: "Insurance")
+#       insurance.add_employee(employee4)
+#       insurance.add_employee(employee5)
+#
+#     assert_equal 5, department.move_employees
+# end
 
 end

@@ -18,7 +18,8 @@ class Employee < ActiveRecord::Base
   end
 
   def give_raise(amount)
-    self.salary += amount
+    #self.salary += amount
+    self.update(salary: salary + amount)
   end
 
   def give_review(review)
@@ -45,8 +46,11 @@ class Employee < ActiveRecord::Base
     self.satisfactory = (count_good - count_bad > 0)
   end
 
-  def palindrome
 
-  end
+  # def palindrome
+  #   self.name.where("name: name.reverse").to_a
+  # end
+
+
 
 end
