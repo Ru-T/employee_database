@@ -147,4 +147,13 @@ class ReviewsTest < Minitest::Test
     assert employee4.satisfactory?
   end
 
+  #Return the total number of employees in a department.
+  def test_total_employees_in_department
+    employee = Employee.create(name: "Naomi", email: "me@example.com", phone: "555-555-5555", salary: 180000)
+    employee2 = Employee.create(name: "Aaron", email: "you@example.com", phone: "777-777-7777", salary: 250000)
+    kindergarten = Department.create(name: "Kindergarten")
+    kindergarten.add_employee(employee)
+    kindergarten.add_employee(employee2)
+    assert_equal 2, kindergarten.total_employees
+  end
 end

@@ -37,15 +37,7 @@ class Employee < ActiveRecord::Base
     good_terms = Regexp.union(good_terms)
     bad_terms = Regexp.union(bad_terms)
 
-    #Find the latest review of the employee being reviewed.
-    # review = Review.select(:review).where(employee_id: self.id)
-    # review2 = Review.find(employee_id: self.id) #.last
-    # review3 = Review.select("review").where("employee_id: self.id").last
-    # SELECT review.last
-    # FROM reviews
-    # WHERE employee_id = 10;
-
-    review = self.reviews.last.review
+    review = self.recent_review.review
 
     count_good = review.scan(good_terms).length
     count_bad = review.scan(bad_terms).length
