@@ -7,15 +7,19 @@ require './migration'
 require './reviews'
 require 'active_record'
 
+ActiveRecord::Migration.verbose = false
+
 ActiveRecord::Base.establish_connection(
   adapter: 'sqlite3',
   database: 'employee_test.sqlite3'
 )
 
-EmployeeMigration.migrate(:down) rescue false
-EmployeeMigration.migrate(:up)
-
 class ReviewsTest < Minitest::Test
+
+  def setup
+    EmployeeMigration.migrate(:down) rescue false
+    EmployeeMigration.migrate(:up)
+  end
 
   def test_create_new_department
     assert Department.create(name: "Development")
