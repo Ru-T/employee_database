@@ -187,18 +187,15 @@ class ReviewsTest < Minitest::Test
     assert_equal [high, very_high], Employee.salary_above_average
   end
 
-#   def test_palindrome_names
-#     employee = Employee.create(name: "hallah", email: "me@example.com", phone: "555-555-5555", salary: 16)
-#     employee2 = Employee.create(name: "notme", email: "you@example.com", phone: "777-777-7777", salary: 9)
-#     employee3 = Employee.create(name: "anderredna", email: "you@example.com", phone: "777-777-7777", salary: 20)
-#
-#     technology = Department.create(name: "Technology")
-#     technology.add_employee(employee)
-#     technology.add_employee(employee2)
-#     technology.add_employee(employee3)
-#
-#     assert_equal [employee, employee3], technology.palindrome
-#   end
+  def test_check_for_palindrome_names
+    Employee.destroy_all
+
+    employee = Employee.create(name: "hallah", email: "me@example.com", phone: "555-555-5555", salary: 16)
+    employee2 = Employee.create(name: "notme", email: "you@example.com", phone: "777-777-7777", salary: 9)
+    employee3 = Employee.create(name: "anderredna", email: "you@example.com", phone: "777-777-7777", salary: 20)
+
+    assert_equal [employee, employee3], Employee.palindrome
+  end
 #
 # #  Return the department with the most employees.
 #   def test_department_with_most_employees

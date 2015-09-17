@@ -35,15 +35,6 @@ class Department < ActiveRecord::Base
     employees.order("name").to_a
   end
 
-  def salary_above_average
-    employees.where("employees.salary > (employees.salary.inject{|sum, salary| sum + salary }/employees.count")#employees.salary.total / employees.count
-  end
-
-  # def palindrome
-  #   employees.where(employees.name == employees.name.reverse)#.to_a
-  #   ## NEED TO FIX THE ABOVE TO ACTUALLY WORK
-  # end
-  #
   # def most_employees
   #   xyz.order(employees.count).first
   # end

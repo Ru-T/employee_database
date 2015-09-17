@@ -52,8 +52,17 @@ class Employee < ActiveRecord::Base
     end
     average = total / Employee.count
     Employee.where("salary > #{average}")
+  end
     # WRONG: .where("employees.salary > (employees.salary.inject{|sum, salary| sum + salary }/employees.count")#employees.salary.total / employees.count
     # SQL: average = Employee.select("AVG(salary) AS average_salary").first.average_salary
-  end
+
+    def self.palindrome
+      palindrome = []
+      Employee.all.each do |e|
+        palindrome << e if e.name == e.name.reverse
+      end
+      palindrome
+    end
+    # OR .where(#this must be SQL) Not Ruby: (name == name.reverse).to_a
 
 end
