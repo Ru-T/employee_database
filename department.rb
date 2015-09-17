@@ -35,18 +35,20 @@ class Department < ActiveRecord::Base
     employees.order("name").to_a
   end
 
-  # def salary_above_average
-  #   employees.where("employees.salary > ((employees.salary.reduce(0){|sum, employee| sum + employee.salary}) / employees.count)").to_a
-  # end
-
-  def palindrome
-    employees.where("employees.name: employees.name.reverse").name
+  def salary_above_average
+    employees.where("employees.salary > 15")
+    ## NEED TO FIX THE ABOVE TO ACTUALLY WORK
   end
 
-  #
-  # def most_employees
-  #
-  # end
+  def palindrome
+    employees.where(name.downcase == name.downcase.reverse).to_a
+    ## NEED TO FIX THE ABOVE TO ACTUALLY WORK
+  end
+
+
+  def most_employees
+    self.order(employees.count).first
+  end
   #
   # def move_employees
   #
