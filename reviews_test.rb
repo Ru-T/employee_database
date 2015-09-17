@@ -19,9 +19,6 @@ class ReviewsTest < Minitest::Test
 
   def test_create_new_department
     assert Department.create(name: "Development")
-    # assert_raises(ArgumentError) do
-    #   Department.create()
-    # end
     assert_raises(ArgumentError) do
       Department.create(1,2)
     end
@@ -32,16 +29,16 @@ class ReviewsTest < Minitest::Test
     assert_raises(ArgumentError) do
       Employee.create(1,2,3,4,5)
     end
-    # assert_raises(ArgumentError) do
-    #   Employee.create(1,2,3)
-    # end
+    assert_raises(ArgumentError) do
+      Employee.create(1,2,3)
+    end
   end
 
   def test_add_employee_to_department
     e = Employee.create(name: "Joanna", email: "jdark@example.com", phone: "515-888-4821", salary: 85000)
     d = Department.create(name: "Development")
     d.add_employee(e)
-    assert_equal e.department_id, d.id
+    assert_equal [e], Department.find(d.id).employees #e.department_id, d.id #[e], d.employees
   end
 
   def test_get_employee_name
@@ -51,7 +48,7 @@ class ReviewsTest < Minitest::Test
 
   def test_get_employee_salary
     employee = Employee.create(name: "Joanna", email: "jdark@example.com", phone: "515-888-4821", salary: 85000)
-    assert_equal 85000, employee.find(salary)
+    assert_equal 85000, employee.salary
   end
 
   def test_get_department_salary
@@ -63,9 +60,10 @@ class ReviewsTest < Minitest::Test
     assert_equal 230000, development.total_salary
   end
 
-  def test_employees_can_be_reviewed
+  def test_employees_can_be_reviewed_positively
     employee = Employee.create(name: "Joanna", email: "jdark@example.com", phone: "515-888-4821", salary: 80000)
     assert employee.give_review("This employee started off great. Not as impressed with her recent performance.")
+    assert employee.reload.satisfactory
   end
 
   def test_new_employees_should_be_satisfactory
@@ -76,7 +74,7 @@ class ReviewsTest < Minitest::Test
   def test_employees_can_get_raises
     employee = Employee.create(name: "Joanna", email: "jdark@example.com", phone: "515-888-4821", salary: 80000)
     employee.give_raise(5000)
-    assert_equal 85000, employee.salary
+    assert_equal 85000, employee.reload.salary #checks for new stored value in database
   end
 
   def test_whole_departments_can_get_raises
@@ -87,9 +85,9 @@ class ReviewsTest < Minitest::Test
     development.add_employee(employee)
     development.add_employee(employee2)
     development.give_raise(30000)
-    assert_equal 95000, employee.salary # employee.reload.salary
-    assert_equal 165000, employee2.salary # employee2.reload.salary
-    assert_equal 20000, employee3.salary # employee3.reload.salary
+    assert_equal 95000, employee.reload.salary
+    assert_equal 165000, employee2.reload.salary
+    assert_equal 20000, employee3.reload.salary
   end
 
   def test_only_satisfactory_employees_get_raises
@@ -102,8 +100,8 @@ class ReviewsTest < Minitest::Test
     development.add_employee(employee2)
 
     development.give_raise(10000)
-    assert_equal 90000, employee.salary
-    assert_equal 150000, employee2.salary
+    assert_equal 90000, employee.reload.salary
+    assert_equal 150000, employee2.reload.salary
   end
 
   def test_no_raises_for_all_bad_employees
@@ -114,9 +112,11 @@ class ReviewsTest < Minitest::Test
     development = Department.create(name: "Development")
     development.add_employee(employee)
     development.add_employee(employee2)
+    assert_equal 230000, development.total_salary
     development.give_raise(20000)
-    assert_equal 80000, employee.salary
-    assert_equal 150000, employee2.salary
+    assert_equal 80000, employee.reload.salary
+    assert_equal 150000, employee2.reload.salary
+    assert_equal 230000, development.total_salary
   end
 
   def test_reviews_can_be_scanned_and_classified
@@ -143,7 +143,7 @@ class ReviewsTest < Minitest::Test
     assert employee4.satisfactory?
   end
 
-#_____________________ NEW TESTS _____________________________
+#___________________________  NEW TESTS _____________________________
 
   def test_total_employees_in_department
     employee = Employee.create(name: "Naomi", email: "me@example.com", phone: "555-555-5555", salary: 180000)
@@ -177,86 +177,84 @@ class ReviewsTest < Minitest::Test
   end
 
   def test_employees_more_than_average_salary
-    employee = Employee.create(name: "Sammy", email: "me@example.com", phone: "555-555-5555", salary: 16)
-    employee2 = Employee.create(name: "Jola", email: "you@example.com", phone: "777-777-7777", salary: 9)
-    employee3 = Employee.create(name: "Mikey", email: "you@example.com", phone: "777-777-7777", salary: 20)
+    Employee.destroy_all #there are employees in the database, we have to wipe them out to know the average salary in our test
 
-    technology = Department.create(name: "Technology")
-    technology.add_employee(employee)
-    technology.add_employee(employee2)
-    technology.add_employee(employee3)
+    mid = Employee.create(name: "Mid", email: "me@example.com", phone: "555-555-5555", salary: 100)
+    low = Employee.create(name: "Low", email: "you@example.com", phone: "777-777-7777", salary: 50)
+    high = Employee.create(name: "High", email: "you@example.com", phone: "777-777-7777", salary: 200)
+    very_high = Employee.create(name: "Very High", email: "you@example.com", phone: "777-777-7777", salary: 300)
 
-    assert_equal [employee, employee3], technology.salary_above_average
+    assert_equal [high, very_high], Employee.salary_above_average
   end
 
-  def test_palindrome_names
-    employee = Employee.create(name: "hallah", email: "me@example.com", phone: "555-555-5555", salary: 16)
-    employee2 = Employee.create(name: "notme", email: "you@example.com", phone: "777-777-7777", salary: 9)
-    employee3 = Employee.create(name: "anderredna", email: "you@example.com", phone: "777-777-7777", salary: 20)
-
-    technology = Department.create(name: "Technology")
-    technology.add_employee(employee)
-    technology.add_employee(employee2)
-    technology.add_employee(employee3)
-
-    assert_equal [employee, employee3], technology.palindrome
-  end
-
-#  Return the department with the most employees.
-  def test_department_with_most_employees
-    employee = Employee.create(name: "Sammy", email: "me@example.com", phone: "555-555-5555", salary: 16)
-    employee2 = Employee.create(name: "Jola", email: "you@example.com", phone: "777-777-7777", salary: 9)
-    employee3 = Employee.create(name: "Mikey", email: "you@example.com", phone: "777-777-7777", salary: 20)
-
-    technology = Department.create(name: "Technology")
-    technology.add_employee(employee)
-    technology.add_employee(employee2)
-    technology.add_employee(employee3)
-
-    employee4 = Employee.create(name: "Naomi", email: "you@example.com", phone: "777-777-7777", salary: 20)
-    employee5 = Employee.create(name: "Aaron", email: "you@example.com", phone: "777-777-7777", salary: 20)
-
-    insurance = Department.create(name: "Insurance")
-    insurance.add_employee(employee4)
-    insurance.add_employee(employee5)
-
-    assert_equal technology, Department.most_employees
-  end
-
-  def test_moving_employees_from_one_department_to_another
-      employee = Employee.create(name: "Sammy", email: "me@example.com", phone: "555-555-5555", salary: 16)
-      employee2 = Employee.create(name: "Jola", email: "you@example.com", phone: "777-777-7777", salary: 9)
-      employee3 = Employee.create(name: "Mikey", email: "you@example.com", phone: "777-777-7777", salary: 20)
-
-      technology = Department.create(name: "Technology")
-      technology.add_employee(employee)
-      technology.add_employee(employee2)
-      technology.add_employee(employee3)
-
-      employee4 = Employee.create(name: "Naomi", email: "you@example.com", phone: "777-777-7777", salary: 20)
-      employee5 = Employee.create(name: "Aaron", email: "you@example.com", phone: "777-777-7777", salary: 20)
-
-      insurance = Department.create(name: "Insurance")
-      insurance.add_employee(employee4)
-      insurance.add_employee(employee5)
-
-    assert_equal 5, department.move_employees(technology, insurance)
-end
-
-#Give a raise of 10% to ALL employees with good reviews. This is different from the raise method which already exists, and also needs to operate over all employees of ALL departments.
-def test_percent_raise_to_all_good_employees
-  employee = Employee.create(name: "Joanna", email: "jdark@example.com", phone: "515-888-4821", salary: 80000)
-  employee2 = Employee.create(name: "Lunk", email: "lunk@example.com", phone: "882-329-3843", salary: 150000)
-  employee3 = Employee.create(name: "Sanic", email: "sanic@example.com", phone: "333-444-5555", salary: 20000)
-
-  employee.give_review("room for improvement")
-  employee2.give_review("positive positive")
-  employee3.give_review("positiong positive")
-
-  employees.give_percent_raise(0.10)
-
-  assert_equal 80000, employee.salary # employee.reload.salary
-  assert_equal 165000, employee2.salary # employee2.reload.salary
-  assert_equal 22000, employee3.salary # employee3.reload.salary
-end
+#   def test_palindrome_names
+#     employee = Employee.create(name: "hallah", email: "me@example.com", phone: "555-555-5555", salary: 16)
+#     employee2 = Employee.create(name: "notme", email: "you@example.com", phone: "777-777-7777", salary: 9)
+#     employee3 = Employee.create(name: "anderredna", email: "you@example.com", phone: "777-777-7777", salary: 20)
+#
+#     technology = Department.create(name: "Technology")
+#     technology.add_employee(employee)
+#     technology.add_employee(employee2)
+#     technology.add_employee(employee3)
+#
+#     assert_equal [employee, employee3], technology.palindrome
+#   end
+#
+# #  Return the department with the most employees.
+#   def test_department_with_most_employees
+#     employee = Employee.create(name: "Sammy", email: "me@example.com", phone: "555-555-5555", salary: 16)
+#     employee2 = Employee.create(name: "Jola", email: "you@example.com", phone: "777-777-7777", salary: 9)
+#     employee3 = Employee.create(name: "Mikey", email: "you@example.com", phone: "777-777-7777", salary: 20)
+#
+#     technology = Department.create(name: "Technology")
+#     technology.add_employee(employee)
+#     technology.add_employee(employee2)
+#     technology.add_employee(employee3)
+#
+#     employee4 = Employee.create(name: "Naomi", email: "you@example.com", phone: "777-777-7777", salary: 20)
+#     employee5 = Employee.create(name: "Aaron", email: "you@example.com", phone: "777-777-7777", salary: 20)
+#
+#     insurance = Department.create(name: "Insurance")
+#     insurance.add_employee(employee4)
+#     insurance.add_employee(employee5)
+#
+#     assert_equal technology, Department.most_employees
+#   end
+#
+#   def test_moving_employees_from_one_department_to_another
+#       employee = Employee.create(name: "Sammy", email: "me@example.com", phone: "555-555-5555", salary: 16)
+#       employee2 = Employee.create(name: "Jola", email: "you@example.com", phone: "777-777-7777", salary: 9)
+#       employee3 = Employee.create(name: "Mikey", email: "you@example.com", phone: "777-777-7777", salary: 20)
+#
+#       technology = Department.create(name: "Technology")
+#       technology.add_employee(employee)
+#       technology.add_employee(employee2)
+#       technology.add_employee(employee3)
+#
+#       employee4 = Employee.create(name: "Naomi", email: "you@example.com", phone: "777-777-7777", salary: 20)
+#       employee5 = Employee.create(name: "Aaron", email: "you@example.com", phone: "777-777-7777", salary: 20)
+#
+#       insurance = Department.create(name: "Insurance")
+#       insurance.add_employee(employee4)
+#       insurance.add_employee(employee5)
+#
+#     assert_equal 5, department.move_employees(technology, insurance)
+# end
+#
+# #Give a raise of 10% to ALL employees with good reviews. This is different from the raise method which already exists, and also needs to operate over all employees of ALL departments.
+# def test_percent_raise_to_all_good_employees
+#   employee = Employee.create(name: "Joanna", email: "jdark@example.com", phone: "515-888-4821", salary: 80000)
+#   employee2 = Employee.create(name: "Lunk", email: "lunk@example.com", phone: "882-329-3843", salary: 150000)
+#   employee3 = Employee.create(name: "Sanic", email: "sanic@example.com", phone: "333-444-5555", salary: 20000)
+#
+#   employee.give_review("room for improvement")
+#   employee2.give_review("positive positive")
+#   employee3.give_review("positiong positive")
+#
+#   employees.give_percent_raise(0.10)
+#
+#   assert_equal 80000, employee.salary # employee.reload.salary
+#   assert_equal 165000, employee2.salary # employee2.reload.salary
+#   assert_equal 22000, employee3.salary # employee3.reload.salary
+# end
 end

@@ -10,18 +10,21 @@ class Employee < ActiveRecord::Base
   has_many :reviews
 
   def satisfactory?
-    self.satisfactory
+    satisfactory #.self is optional
   end
 
   def give_raise(amount)
-    #self.salary += amount
-    self.update(salary: salary + amount)
+    update(salary: salary + amount)
   end
 
-  def give_review(review)
-    Review.create(review: review, employee_id: self.id)
+  def give_review(new_review)
+    Review.create(review: new_review, employee_id: self.id) #review = new_review
     assess_performance
     true
+    #if review is stored in this database
+    # self.review = new_review
+    # assess_performance
+    # save
   end
 
   def recent_review
@@ -42,9 +45,15 @@ class Employee < ActiveRecord::Base
     self.satisfactory = (count_good - count_bad > 0)
   end
 
-
-
-
-
+  def self.salary_above_average
+    total = 0
+    Employee.all.each do |e|
+      total += e.salary
+    end
+    average = total / Employee.count
+    Employee.where("salary > #{average}")
+    # WRONG: .where("employees.salary > (employees.salary.inject{|sum, salary| sum + salary }/employees.count")#employees.salary.total / employees.count
+    # SQL: average = Employee.select("AVG(salary) AS average_salary").first.average_salary
+  end
 
 end

@@ -19,9 +19,9 @@ class Department < ActiveRecord::Base
   def give_raise(total_amount)
     getting_raise = employees.select {|e| e.satisfactory?}
     getting_raise.each {|e| e.give_raise(total_amount / getting_raise.length)}
-    # getting_raise = self.employees.where(satisfactory: true)
-    # getting_raise.each {|e| e.give_raise(total_amount / getting_raise.length})
   end
+
+#___________________________ NEW METHODS _____________________________
 
   def total_employees
     employees.count
@@ -37,17 +37,16 @@ class Department < ActiveRecord::Base
 
   def salary_above_average
     employees.where("employees.salary > (employees.salary.inject{|sum, salary| sum + salary }/employees.count")#employees.salary.total / employees.count
-    ## NEED TO FIX THE ABOVE TO ACTUALLY WORK
   end
 
-  def palindrome
-    employees.where(employees.name == employees.name.reverse)#.to_a
-    ## NEED TO FIX THE ABOVE TO ACTUALLY WORK
-  end
-
-  def most_employees
-    xyz.order(employees.count).first
-  end
+  # def palindrome
+  #   employees.where(employees.name == employees.name.reverse)#.to_a
+  #   ## NEED TO FIX THE ABOVE TO ACTUALLY WORK
+  # end
+  #
+  # def most_employees
+  #   xyz.order(employees.count).first
+  # end
 
   # def move_employees(from_department, to_department)
   #   self.update(employee: )

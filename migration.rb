@@ -2,7 +2,7 @@ require 'active_record'
 
 ActiveRecord::Base.establish_connection(
   adapter: 'sqlite3',
-  database: 'employee.sqlite3' #name can be whatever you want with sqlite3 suffix, and this file does not yet have to exist if you're using sqlite3
+  database: 'employee.sqlite3' 
 )
 
 class EmployeeMigration < ActiveRecord::Migration
