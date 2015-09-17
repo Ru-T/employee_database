@@ -10,11 +10,7 @@ class Employee < ActiveRecord::Base
   has_many :reviews
 
   def satisfactory?
-    if self.satisfactory == nil
-      self.satisfactory = true
-    else
-      self.satisfactory
-    end
+    self.satisfactory
   end
 
   def give_raise(amount)
@@ -47,9 +43,7 @@ class Employee < ActiveRecord::Base
   end
 
 
-  # def palindrome
-  #   self.name.where("name: name.reverse").to_a
-  # end
+
 
 
 
