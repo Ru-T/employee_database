@@ -51,7 +51,7 @@ class ReviewsTest < Minitest::Test
 
   def test_get_employee_salary
     employee = Employee.create(name: "Joanna", email: "jdark@example.com", phone: "515-888-4821", salary: 85000)
-    assert_equal 85000, employee.salary
+    assert_equal 85000, employee.find(salary)
   end
 
   def test_get_department_salary
