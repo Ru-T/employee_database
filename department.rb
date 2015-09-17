@@ -35,13 +35,16 @@ class Department < ActiveRecord::Base
     employees.order("name").to_a
   end
 
+  def move_employees(new_department)
+    employees.each do |e|
+      new_department.add_employee(e)
+    end
+  end
+
   # def most_employees
   #   xyz.order(employees.count).first
   # end
 
-  # def move_employees(from_department, to_department)
-  #   self.update(employee: )
-  #   return employees.count
-  # end
+
 
 end

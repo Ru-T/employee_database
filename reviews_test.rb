@@ -196,7 +196,23 @@ class ReviewsTest < Minitest::Test
 
     assert_equal [employee, employee3], Employee.palindrome
   end
-#
+
+  def test_moving_all_employees_from_one_department_to_another
+    a = Employee.create(name: "Sammy", email: "me@example.com", phone: "555-555-5555", salary: 16)
+    b = Employee.create(name: "Jola", email: "you@example.com", phone: "777-777-7777", salary: 9)
+
+    technology = Department.create(name: "Technology")
+    insurance = Department.create(name: "Insurance")
+
+    technology.add_employee(a)
+    technology.add_employee(b)
+
+    technology.move_employees(insurance)
+
+    assert_equal insurance, a.department
+    assert_equal insurance, b.department
+  end
+
 # #  Return the department with the most employees.
 #   def test_department_with_most_employees
 #     employee = Employee.create(name: "Sammy", email: "me@example.com", phone: "555-555-5555", salary: 16)
@@ -218,25 +234,7 @@ class ReviewsTest < Minitest::Test
 #     assert_equal technology, Department.most_employees
 #   end
 #
-#   def test_moving_employees_from_one_department_to_another
-#       employee = Employee.create(name: "Sammy", email: "me@example.com", phone: "555-555-5555", salary: 16)
-#       employee2 = Employee.create(name: "Jola", email: "you@example.com", phone: "777-777-7777", salary: 9)
-#       employee3 = Employee.create(name: "Mikey", email: "you@example.com", phone: "777-777-7777", salary: 20)
-#
-#       technology = Department.create(name: "Technology")
-#       technology.add_employee(employee)
-#       technology.add_employee(employee2)
-#       technology.add_employee(employee3)
-#
-#       employee4 = Employee.create(name: "Naomi", email: "you@example.com", phone: "777-777-7777", salary: 20)
-#       employee5 = Employee.create(name: "Aaron", email: "you@example.com", phone: "777-777-7777", salary: 20)
-#
-#       insurance = Department.create(name: "Insurance")
-#       insurance.add_employee(employee4)
-#       insurance.add_employee(employee5)
-#
-#     assert_equal 5, department.move_employees(technology, insurance)
-# end
+
 #
 # #Give a raise of 10% to ALL employees with good reviews. This is different from the raise method which already exists, and also needs to operate over all employees of ALL departments.
 # def test_percent_raise_to_all_good_employees
