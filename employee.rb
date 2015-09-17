@@ -8,6 +8,7 @@ ActiveRecord::Base.establish_connection(
 class Employee < ActiveRecord::Base
   belongs_to :department
   has_many :reviews
+  validates :salary, presence: true
 
   def satisfactory?
     satisfactory #.self is optional

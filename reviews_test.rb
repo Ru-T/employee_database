@@ -30,7 +30,7 @@ class ReviewsTest < Minitest::Test
 
   def test_employees_must_have_salaries # this will only pass if you have a validates presence
     e = Employee.new()
-    refture e.save
+    refute e.save
   end
 
   def test_create_new_department
