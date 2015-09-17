@@ -7,6 +7,7 @@ ActiveRecord::Base.establish_connection(
 
 class Department < ActiveRecord::Base
   has_many :employees
+  validate :name, unique: true
 
   def add_employee(employee)
     employees << employee

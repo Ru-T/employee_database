@@ -7,7 +7,7 @@ require './migration'
 require './reviews'
 require 'active_record'
 
-ActiveRecord::Migration.verbose = false
+ActiveRecord::Migration.verbose = false #wipes out database before each test
 
 ActiveRecord::Base.establish_connection(
   adapter: 'sqlite3',
@@ -19,6 +19,18 @@ class ReviewsTest < Minitest::Test
   def setup
     EmployeeMigration.migrate(:down) rescue false
     EmployeeMigration.migrate(:up)
+  end
+
+  def test_no_duplicate_departments # this will only pass if you have a validates uniqueness in your class
+    assert Department.create(name: "Development")
+
+    d = Department.new(name: "Development")
+    refute d.save
+  end
+
+  def test_employees_must_have_salaries # this will only pass if you have a validates presence
+    e = Employee.new()
+    refture e.save
   end
 
   def test_create_new_department
